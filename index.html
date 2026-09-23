@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Contagem para o aniversário da Dani</title>
+<style>
+  :root{
+    --green:#1e7a3d;
+    --green-dark:#0f5c28;
+    box-sizing:border-box;
+  }
+  *{box-sizing:border-box;}
+  html,body{
+    margin:0;
+    height:100%;
+    background:#ffffff;
+    font-family:'Arial Narrow', Arial, sans-serif;
+    color:#000;
+  }
+  body{
+    display:flex;
+    flex-direction:column;
+    min-height:100%;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  .header{
+    background:var(--green);
+    color:#fff;
+    font-weight:800;
+    letter-spacing:1px;
+    padding:16px 10px;
+    font-size:1.2rem;
+    text-transform:uppercase;
+    text-align:center;
+  }
+  main{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-start;
+    padding:24px 16px;
+    gap:24px;
+  }
+  .count-wrap p{
+    margin:0 0 10px;
+    font-weight:700;
+    font-size:1.05rem;
+    letter-spacing:.5px;
+    text-transform:uppercase;
+    text-align:center;
+  }
+  .grid{
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  .box{
+    display:inline-block;
+    min-width:90px;
+    border:2px solid #333;
+    border-radius:2px;
+    padding:8px 12px;
+    font-size:1.7rem;
+    font-weight:800;
+    color:#111;
+    background:#ffffff;
+  }
+  .unit{
+    font-size:.8rem;
+    display:block;
+    font-weight:600;
+    color:#333;
+    text-transform:none;
+  }
+  .card{
+    width:100%;
+    max-width:480px;
+    border:3px solid var(--green);
+    border-radius:8px;
+    padding:20px;
+    text-align:center;
+    background:#fff;
+    box-shadow:0 4px 14px rgba(0,0,0,.1);
+  }
+  .card h2{
+    margin:0 0 18px;
+    font-size:1.2rem;
+    color:var(--green-dark);
+  }
+  .answers{
+    display:flex;
+    gap:12px;
+    justify-content:center;
+    flex-wrap:wrap;
+  }
+  .answer-btn{
+    flex:1;
+    min-width:120px;
+    padding:14px 10px;
+    font-size:1rem;
+    font-weight:800;
+    text-transform:uppercase;
+    border:2px solid var(--green);
+    border-radius:6px;
+    background:#fff;
+    color:var(--green-dark);
+    cursor:pointer;
+    transition:background .15s;
+  }
+  .answer-btn:hover{background:#eafaf0;}
+  .answer-btn:active{background:#d7f2e1;}
+  .reaction{
+    margin-top:16px;
+    min-height:24px;
+    font-weight:700;
+    font-size:.95rem;
+  }
+  .percent-row{
+    margin-top:10px;
+    font-size:.8rem;
+    color:#555;
+  }
+  .footer{
+    background:var(--green);
+    color:#fff;
+    font-weight:800;
+    padding:14px 10px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    font-size:1rem;
+    text-transform:uppercase;
+  }
+  .footer .plus{
+    background:#fff;
+    color:var(--green);
+    width:22px;
+    height:22px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:900;
+  }
+</style>
+</head>
+<body>
+  <div class="header">Estamos esperando o aniversário da Dani</div>
+  <main>
+    <div class="count-wrap">
+      <p>Faltam</p>
+      <div class="grid">
+        <div class="box" id="dias">--<span class="unit">dias</span></div>
+        <div class="box" id="horas">--<span class="unit">horas</span></div>
+        <div class="box" id="min">--<span class="unit">min</span></div>
+        <div class="box" id="seg">--<span class="unit">seg</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 id="pergunta">Carregando pergunta do dia...</h2>
+      <div class="answers">
+        <button class="answer-btn" data-val="sim">Sim</button>
+        <button class="answer-btn" data-val="nao">Não</button>
+      </div>
+      <div class="reaction" id="reacao"></div>
+      <div class="percent-row" id="percent"></div>
+    </div>
+  </main>
+  <div class="footer"><span class="plus">+</span> Separe o bolo e as velinhas!</div>
+
+<script>
+  // ---- Contagem regressiva ----
+  const alvo = new Date(2026, 8, 28, 0, 0, 0);
+  function atualizarContagem(){
+    const agora = new Date();
+    let diff = alvo - agora;
+    if(diff <= 0){
+      document.getElementById('dias').innerHTML = '🎉<span class="unit">Hoje!</span>';
+      document.getElementById('horas').innerHTML = '🎂<span class="unit">é dia</span>';
+      document.getElementById('min').innerHTML = '🎈<span class="unit">de festa</span>';
+      document.getElementById('seg').innerHTML = '🥳<span class="unit">Parabéns!</span>';
+      return;
+    }
+    const dias = Math.floor(diff/86400000);
+    const horas = Math.floor((diff/3600000)%24);
+    const min = Math.floor((diff/60000)%60);
+    const seg = Math.floor((diff/1000)%60);
+    document.getElementById('dias').innerHTML = dias + '<span class="unit">dias</span>';
+    document.getElementById('horas').innerHTML = horas + '<span class="unit">horas</span>';
+    document.getElementById('min').innerHTML = min + '<span class="unit">min</span>';
+    document.getElementById('seg').innerHTML = seg + '<span class="unit">seg</span>';
+  }
+  atualizarContagem();
+  setInterval(atualizarContagem, 1000);
+
+  // ---- Pergunta do dia (cicla entre 4 perguntas, muda a cada dia, igual para todo mundo) ----
+  const perguntas = [
+    'Já comprou o presente?',
+    'Já comprou o bolo?',
+    'Já comprou os docinhos?',
+    'Já montou a decoração?'
+  ];
+  const inicio = Date.UTC(2026, 8, 23); // 23/09/2026 = pergunta 1, dia em que a contagem começou
+  const hojeUTC = Date.UTC(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
+  const diasDesdeInicio = Math.floor((hojeUTC - inicio) / 86400000);
+  const qIndex = ((diasDesdeInicio % perguntas.length) + perguntas.length) % perguntas.length;
+  document.getElementById('pergunta').textContent = perguntas[qIndex];
+
+  const reacaoEl = document.getElementById('reacao');
+  const percentEl = document.getElementById('percent');
+  const botoes = document.querySelectorAll('.answer-btn');
+
+  function mensagemPara(valor, pct){
+    if(valor === 'sim'){
+      if(pct >= 80) return '🎉 Mandou bem! Você e a maioria já resolveram — a Dani vai chorar de emoção (ou de susto).';
+      if(pct >= 50) return '👍 Adiantado(a)! Já pode postar "organizado" no LinkedIn.';
+      if(pct >= 20) return '😎 Poucos fizeram isso ainda... você é praticamente um herói de capa.';
+      return '🚀 Primeiro(a) da fila! Alguém chama a imprensa, achamos o funcionário do mês.';
+    } else {
+      if(pct >= 80) return '😅 Relaxa, é praticamente um esporte coletivo de procrastinação aqui.';
+      if(pct >= 50) return '⏰ Empatado com metade da galera... a ansiedade agradece a companhia.';
+      if(pct >= 20) return '🙈 Quase todo mundo já fez isso... só faltam você e a força da vontade.';
+      return '🔥 Você está SOZINHO(A) nessa. Nem o "vou fazer amanhã" te salva mais.';
+    }
+  }
+
+  async function iniciar(){
+    const db = await claude.use('db');
+    if(!db){
+      botoes.forEach(btn => {
+        btn.addEventListener('click', () => {
+          reacaoEl.textContent = mensagemPara(btn.dataset.val, 50);
+        });
+      });
+      return;
+    }
+    const doc = db.doc('reactions/q' + qIndex);
+
+    function render(data){
+      const sim = (data && data.sim) || 0;
+      const nao = (data && data.nao) || 0;
+      const total = sim + nao;
+      if(total > 0){
+        const pctSim = Math.round((sim/total)*100);
+        const pctNao = 100 - pctSim;
+        percentEl.textContent = `Sim: ${pctSim}% · Não: ${pctNao}% (${total} respostas)`;
+      } else {
+        percentEl.textContent = 'Seja o primeiro a responder!';
+      }
+      return {sim, nao, total};
+    }
+
+    let atual = {sim:0, nao:0, total:0};
+    doc.onSnapshot(snap => {
+      atual = render(snap ? snap.data() : null);
+    });
+
+    botoes.forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const campo = btn.dataset.val;
+        try{
+          await doc.set({
+            sim: (atual.sim || 0) + (campo === 'sim' ? 1 : 0),
+            nao: (atual.nao || 0) + (campo === 'nao' ? 1 : 0)
+          }, {merge:true});
+        }catch(e){}
+        const novoTotal = (atual.sim||0) + (atual.nao||0) + 1;
+        const novoValor = (campo === 'sim' ? (atual.sim||0)+1 : (atual.nao||0)+1);
+        const pct = Math.round((novoValor/novoTotal)*100);
+        reacaoEl.textContent = mensagemPara(campo, pct);
+      });
+    });
+  }
+  iniciar();
+</script>
+</body>
+</html>
